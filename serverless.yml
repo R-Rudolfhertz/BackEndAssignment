@@ -38,6 +38,10 @@ provider:
         - dynamodb:PutItem
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/iotdata-*"
 
+custom:
+  awsAccountNumber: ${file(./env.yml):awsAccountNumber}
+  iotDataTableStreamTimestamp: ${file(./env.yml):iotDataTableStreamTimestamp}
+  
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -96,6 +100,13 @@ functions:
       - httpApi:
           path: /iotdata/{id}
           method: get
+
+  notifier:
+    handler: api/notificationserver.notifier
+    description: Notify About THERMAL Sensor
+    events:
+      - stream: arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountNumber}:table/${self:provider.environment.IOTDATA_TABLE}/stream/${self:custom.iotDataTableStreamTimestamp}
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

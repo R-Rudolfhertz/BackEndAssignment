@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .serverless
+env.yml
 
 # testing
 /coverage
